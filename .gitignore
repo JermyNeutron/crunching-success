@@ -1,2 +1,7 @@
 # folders
+qt_designer/
+scratch/
 venv/
+
+# misc
+__pycache__/
