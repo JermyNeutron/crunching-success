@@ -5,7 +5,7 @@ Main Program
 """
 This function will iterate through the list and print out starting capital, utilization, and expected perfect take profit, and ending balance.
 
-Assume first trade maxes out utilization percent. Each iteration will run through aspread trade until the (sum of an additional spread trade) is less than the capital utilization max.
+Assume first trade maxes out utilization percent. Each iteration will run through a spread trade until the (sum of an additional spread trade) is less than the capital utilization max.
 """
 def main(threshold, cap_start, util_pct_max, adj_gain, spread_cost):
     meta_list = []
