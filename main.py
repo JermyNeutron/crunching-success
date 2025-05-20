@@ -81,7 +81,7 @@ def main():
         if isinstance(user_choice, int):
             return False
         elif int(user_choice) == 1:
-            fixed_return.main()
+            fixed_return_pct.main()
         
 
 if __name__ == "__main__":
