@@ -71,8 +71,6 @@ def get_duration(days: int) -> str:
     else:
         duration_print += f"{rem_days} {rd_prefix}"
 
-    duration_print += f" ({total} days)"
-
     return duration_print
 
 
@@ -93,29 +91,22 @@ def get_summary(meta_list: list) -> tuple[int, float, float]:
         5 = fees
         6 = ending balance
     """
+    total = len(meta_list)
     duration = get_duration(len(meta_list))
     starting_balance = meta_list[0][0]
     ending_balance = meta_list[-1][6]
-    summary_headers = ['Duration', 'Starting Balance', 'Ending Balance']
-    return summary_headers, [duration, starting_balance, ending_balance]
+    return total, duration, starting_balance, ending_balance
 
 
-def py_get_platform_fee() -> float:
-    fees = {"C": 0.65, "R": 0.08}
-    while True:
-        choice = input("""Select Broker:
-        C) Charles Schwab ThinkOrSwim
-        R) Robinhood
-        
-        : """).strip().upper()
-        if choice in fees:
-            return fees[choice]
-        else:
-            print("Invalid selection. Input a valid option.")
+def get_platform_fee(brok_index: int) -> float:
+    # 1) Charles Schwab
+    # 2) Robinhood
+    fees = {0: 0, 1: 0.65, 2: 0.08}
+    return fees[brok_index]
 
 
-def prompt(threshold: float, cap_start: float, util_pct_max: float,
-           adj_gain: float, contract_cost: float, platform_fee: float,
+def prompt(cap_start: float, threshold: float, util_pct_max: float,
+           adj_gain: float, contract_cost: float, brok_index: int,
            os_type: str,) -> None:
     """
     Fixed Return - Percentage CSV calculates sequential balances from
@@ -149,6 +140,7 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
     # init portfolio and trade costs
     portfolio = cap_start
     contract_amt = 1
+    platform_fee = get_platform_fee(brok_index)
     # define iteration end
     while portfolio < threshold:
         # track amount of contracts being traded per spread
@@ -184,14 +176,13 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
 
     with open(file_path, "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerows(summary)
-        writer.writerow([])
         writer.writerows(data)
 
     # macOS 
     if os_type == 'Darwin':
         subprocess.run(['open', '-a', 'Numbers', file_path])
 
+    return meta_list, summary
 
     # deletable, testing popping
     #
@@ -223,21 +214,17 @@ def main(os_type: str) -> tuple[float, float, float, float, float, float]:
     util_pct_max = get_input("Maximum portfolio utilization percentage (%): ", 55, float) # convert percent to decimal
     adj_gain = get_input("What's the trade's take-profit percentage (%): ", 10, float) # convert percent to decimal
     contract_cost = get_input("What's the typical premium: ", 1.5, float) # convert cost/share to cost/contract
-    platform_fee = py_get_platform_fee()
+    brok_index = int(get_input("""Select a broker:
+    1) Charles Schwab (ThinkOrSwim)
+    2) Robinhood
+                            
+    : """, 1, str))
 
-    prompt(threshold, cap_start, util_pct_max, adj_gain,
-         contract_cost, platform_fee, os_type)
+    prompt(cap_start, threshold, util_pct_max, adj_gain,
+         contract_cost, brok_index, os_type)
 
 
 if __name__ == "__main__":
-    threshold = 1000000 # monetary goal
-    cap_start = 300 # starting portfolio
-    util_pct_max = 55 # maximum portfolio utilization percent
-    adj_gain = 10 # profit percentage in decimal
-    contract_cost = 1.1 # typical trade max risk
-    platform_fee = 0.08# variable for platform fee (RH = .08, CS = 0.65)
     print("running program")
-
     os_type = platform.system()
-    prompt(threshold, cap_start, util_pct_max, adj_gain,
-         contract_cost, platform_fee, os_type)
+    main(os_type)
