@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1313</width>
+    <height>644</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="layoutDirection">
+    <enum>Qt::LayoutDirection::LeftToRight</enum>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>60</number>
+      </property>
+      <property name="topMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>60</number>
+      </property>
+      <property name="bottomMargin">
+       <number>60</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="sb_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Starting Balance</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="sb_spin">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="prefix">
+         <string>$</string>
+        </property>
+        <property name="maximum">
+         <double>999999999999.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>300.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="eb_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Goal Threshold</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="eb_spin">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="prefix">
+         <string>$</string>
+        </property>
+        <property name="maximum">
+         <double>999999999999.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>25000.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="util_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Portfolio Utilization Per Trade</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="util_spin">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>55.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="tgt_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Take-Profit Target</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="tgt_spin">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>10.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="prem_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Average Premium</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="prem_spin">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="prefix">
+         <string>$</string>
+        </property>
+        <property name="suffix">
+         <string/>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="brok_label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Brokerage</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="brok_combo">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="currentText">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>(Select a brokerage)</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>(Select a brokerage)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Charles Schwab (ThinkOrSwim)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Robinhood</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Policy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>60</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_generate">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Generate</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="sum_label">
+        <property name="text">
+         <string>... waiting for numbers to crunch ...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="sum_table"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1313</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
