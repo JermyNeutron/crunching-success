@@ -100,8 +100,22 @@ def get_summary(meta_list: list) -> tuple[int, float, float]:
     return summary_headers, [duration, starting_balance, ending_balance]
 
 
+def py_get_platform_fee() -> float:
+    fees = {"C": 0.65, "R": 0.08}
+    while True:
+        choice = input("""Select Broker:
+        C) Charles Schwab ThinkOrSwim
+        R) Robinhood
+        
+        : """).strip().upper()
+        if choice in fees:
+            return fees[choice]
+        else:
+            print("Invalid selection. Input a valid option.")
+
+
 def prompt(threshold: float, cap_start: float, util_pct_max: float,
-           adj_gain: float, contract_cost: float, platform_fee: str,
+           adj_gain: float, contract_cost: float, platform_fee: float,
            os_type: str,) -> None:
     """
     Fixed Return - Percentage CSV calculates sequential balances from
@@ -114,7 +128,7 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
         util_pct_max (float)
         adj_gain (float)
         contract_cost (float)
-        platform_fee (str)
+        platform_fee (float)
         os_type (str)
 
     Returns:
@@ -151,19 +165,19 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
             actual_cost = contract_cost * contract_amt
             actual_util = actual_cost / portfolio
             # define profits
-            profit = actual_cost * adj_gain
+            target = actual_cost * adj_gain
             # define ending portfolio
             fees = contract_amt * 2 * platform_fee
-            end_port = portfolio + profit - fees
+            end_port = portfolio + target - fees
             transaction = [f"{portfolio:.2f}", int(contract_amt),
                            f"{actual_cost:.2f}", f"{actual_util:.2f}",
-                           f"{profit:.2f}", f"{fees:.2f}", f"{end_port:.2f}"]
+                           f"{target:.2f}", f"{fees:.2f}", f"{end_port:.2f}"]
             meta_list.append(transaction)
             return end_port
 
         portfolio = mathing(portfolio, contract_amt)
     transaction_header = [["Starting Balance", "C. Amt", "Cost",
-                          "Util%", "Profit", "Fees",
+                          "Util%", "Target", "Fees",
                           "Ending Balance"]]
     summary = get_summary(meta_list)
     data = transaction_header + meta_list
@@ -187,8 +201,7 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
     # - ending balance
 
 
-
-def main(os_type: str) -> tuple[float, float, float, float, str, float]:
+def main(os_type: str) -> tuple[float, float, float, float, float, float]:
     """
     Begins Fixed Return - Percentage by collecting user input.
 
@@ -201,7 +214,7 @@ def main(os_type: str) -> tuple[float, float, float, float, str, float]:
         util_pct_max (float)
         adj_gain (float)
         contract_cost (float)
-        platform_fee (str)
+        platform_fee (float)
     """
 
 
@@ -210,7 +223,7 @@ def main(os_type: str) -> tuple[float, float, float, float, str, float]:
     util_pct_max = get_input("Maximum portfolio utilization percentage (%): ", 55, float) # convert percent to decimal
     adj_gain = get_input("What's the trade's take-profit percentage (%): ", 10, float) # convert percent to decimal
     contract_cost = get_input("What's the typical premium: ", 1.5, float) # convert cost/share to cost/contract
-    platform_fee = .65
+    platform_fee = py_get_platform_fee()
 
     prompt(threshold, cap_start, util_pct_max, adj_gain,
          contract_cost, platform_fee, os_type)
