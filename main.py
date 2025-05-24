@@ -67,21 +67,27 @@
 #     print("running program")
 #     main(threshold, cap_start, util_pct_max, adj_gain, contract_cost, platform_fee)
 
+import platform
 import fixed_return_pct
 
 
 def main():
+
+
+    os_type = platform.system()
+
     while True:
-        user_choice = input("Select a program:"
-        "1) Fixed Return"
-        ""
-        "Q) Exit"
-        ""
-        ": ")
+        user_choice = input("""Select a program:
+        1) Fixed Return
+        Q) Exit
+        
+        : """)
         if isinstance(user_choice, int):
             return False
         elif int(user_choice) == 1:
-            fixed_return_pct.main()
+            fixed_return_pct.main(os_type)
+        else:
+            return False
         
 
 if __name__ == "__main__":

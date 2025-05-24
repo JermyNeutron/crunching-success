@@ -1,4 +1,6 @@
 import csv
+import platform
+import subprocess
 
 """
 Main Program
@@ -13,9 +15,94 @@ Assume first trade maxes out utilization percent. Each iteration will
 run through a trade trade until the (sum of an additional trade trade)
 is less than the capital utilization max.
 """
+
+
+def get_input(question: str, default: any, input_type: str) -> any:
+    """
+    
+    """
+    user_input = input(f"{question} (default: {default}): ")
+    if not user_input:
+        return default
+    try:
+        return input_type(user_input)
+    except ValueError:
+        print(f"Invalid input. Using default: {default}")
+        return default
+
+
+def get_duration(days: int) -> str:
+    """
+    Converts days into a duration statement, i.e. "2 months, 1 day, (60 days)
+
+    Args:
+        days (int)
+
+    Returns:
+        duration_print (str)
+    """
+    days = 60
+    total = days
+    years = days // 365
+    if years:
+        days -= years * 365
+    calendar_seq = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    months = 0
+    for i in calendar_seq:
+        if days - i >= 0:
+            days -= i
+            months += 1
+    rem_days = days
+    y_prefix = "years" if years > 1 else "year"
+    m_prefix = "months" if months > 1 else "month"
+    rd_prefix = "days" if rem_days > 1 else "day"
+
+    duration_print = ""
+    if years:
+        duration_print += f"{years} {y_prefix}"
+        if months:
+            duration_print += f", {months} {m_prefix}"
+        if rem_days:
+            duration_print += f", {rem_days} {rd_prefix}"
+    elif months:
+        duration_print += f"{months} {m_prefix}"
+        if rem_days:
+            duration_print += f", {rem_days} {rd_prefix}"
+    else:
+        duration_print += f"{rem_days} {rd_prefix}"
+
+    duration_print += f" ({total} days)"
+
+    return duration_print
+
+
+def get_summary(meta_list: list) -> tuple[int, float, float]:
+    """
+    Args:
+        meta_list (list)
+
+    Returns:
+        something
+
+    Format:
+        0 = starting balance
+        1 = contract amount
+        2 = trade cost
+        3 = portfolio utilization
+        4 = trade profit
+        5 = fees
+        6 = ending balance
+    """
+    duration = get_duration(len(meta_list))
+    starting_balance = meta_list[0][0]
+    ending_balance = meta_list[-1][6]
+    summary_headers = ['Duration', 'Starting Balance', 'Ending Balance']
+    return summary_headers, [duration, starting_balance, ending_balance]
+
+
 def prompt(threshold: float, cap_start: float, util_pct_max: float,
-           adj_gain: float, contract_cost: float, platform_fee: str
-           ) -> None:
+           adj_gain: float, contract_cost: float, platform_fee: str,
+           os_type: str,) -> None:
     """
     Fixed Return - Percentage CSV calculates sequential balances from
     a given take-profit percentage, and a CSV will be produced in the
@@ -28,14 +115,23 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
         adj_gain (float)
         contract_cost (float)
         platform_fee (str)
+        os_type (str)
 
     Returns:
         None
     """
 
+    # export CSV location
     file_path = 'export/export_scratch.csv'
 
+    # data list for export
     meta_list = []
+
+    # initialization of user input
+    util_pct_max = util_pct_max / 100
+    adj_gain = adj_gain / 100
+    contract_cost = contract_cost * 100
+
     # init portfolio and trade costs
     portfolio = cap_start
     contract_amt = 1
@@ -59,28 +155,45 @@ def prompt(threshold: float, cap_start: float, util_pct_max: float,
             # define ending portfolio
             fees = contract_amt * 2 * platform_fee
             end_port = portfolio + profit - fees
-            transaction = [portfolio, contract_amt, actual_cost,
-                           actual_util, profit, fees, end_port]
+            transaction = [f"{portfolio:.2f}", int(contract_amt),
+                           f"{actual_cost:.2f}", f"{actual_util:.2f}",
+                           f"{profit:.2f}", f"{fees:.2f}", f"{end_port:.2f}"]
             meta_list.append(transaction)
             return end_port
 
         portfolio = mathing(portfolio, contract_amt)
-    transaction_header = [["Portfolio", "Contract Amount", "Trade Cost",
-                          "Portfolio Utilization", "Profit", "Fees",
+    transaction_header = [["Starting Balance", "C. Amt", "Cost",
+                          "Util%", "Profit", "Fees",
                           "Ending Balance"]]
+    summary = get_summary(meta_list)
     data = transaction_header + meta_list
-    
+
     with open(file_path, "w", newline="") as file:
         writer = csv.writer(file)
+        writer.writerows(summary)
+        writer.writerow([])
         writer.writerows(data)
 
+    # macOS 
+    if os_type == 'Darwin':
+        subprocess.run(['open', '-a', 'Numbers', file_path])
 
-def main() -> tuple[float, float, float, float, str, float]:
+
+    # deletable, testing popping
+    #
+    # things i want to pull for more important details
+    # - how many days converted to years, months, day
+    # - starting balance
+    # - ending balance
+
+
+
+def main(os_type: str) -> tuple[float, float, float, float, str, float]:
     """
     Begins Fixed Return - Percentage by collecting user input.
 
     Args:
-        None
+        os_type (str)
 
     Returns:
         threshold (float)
@@ -90,40 +203,28 @@ def main() -> tuple[float, float, float, float, str, float]:
         contract_cost (float)
         platform_fee (str)
     """
-    def get_input(question: str, default: any, input_type: str) -> any:
-        """
-        
-        """
-        user_input = input(f"{question} (default: {default}): ")
-        if not user_input:
-            return default
-        try:
-            return input_type(user_input)
-        except ValueError:
-            print(f"Invalid input. Using default: {default}")
-            return default
 
 
-    while True:
-        while True:
-            threshold = get_input("What's the target: ", 1000000, float)
-            cap_start = get_input("What's the starting balance: ", 25000, float)
-            util_pct_max = get_input("Maximum portfolio utilization percentage (%): ", 55, float) # convert percent to decimal
-            adj_gain = get_input("What's the trade's take-profit percentage (%): ", 10, float) # convert percent to decimal
-            contract_cost = get_input("What's the typical premium: ", 1.5, float) # convert cost/share to cost/contract
-            platform_fee = None
+    threshold = get_input("What's the target: ", 1000000, float)
+    cap_start = get_input("What's the starting balance: ", 25000, float)
+    util_pct_max = get_input("Maximum portfolio utilization percentage (%): ", 55, float) # convert percent to decimal
+    adj_gain = get_input("What's the trade's take-profit percentage (%): ", 10, float) # convert percent to decimal
+    contract_cost = get_input("What's the typical premium: ", 1.5, float) # convert cost/share to cost/contract
+    platform_fee = .65
 
     prompt(threshold, cap_start, util_pct_max, adj_gain,
-         contract_cost, platform_fee)
+         contract_cost, platform_fee, os_type)
 
 
 if __name__ == "__main__":
     threshold = 1000000 # monetary goal
     cap_start = 300 # starting portfolio
-    util_pct_max = 0.55 # maximum portfolio utilization percent
-    adj_gain = 0.1 # profit percentage in decimal
-    contract_cost = 150 # typical trade max risk
-    platform_fee = 0.65# variable for platform fee (RH = .08, CS = 0.65)
+    util_pct_max = 55 # maximum portfolio utilization percent
+    adj_gain = 10 # profit percentage in decimal
+    contract_cost = 1.1 # typical trade max risk
+    platform_fee = 0.08# variable for platform fee (RH = .08, CS = 0.65)
     print("running program")
+
+    os_type = platform.system()
     prompt(threshold, cap_start, util_pct_max, adj_gain,
-         contract_cost, platform_fee)
+         contract_cost, platform_fee, os_type)
