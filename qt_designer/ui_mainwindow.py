@@ -142,4 +142,3 @@ class Ui_MainWindow(object):
         self.brok_combo.setItemText(1, _translate("MainWindow", "Charles Schwab (ThinkOrSwim)"))
         self.brok_combo.setItemText(2, _translate("MainWindow", "Robinhood"))
         self.button_generate.setText(_translate("MainWindow", "Generate"))
-        self.sum_label.setText(_translate("MainWindow", "... waiting for numbers to crunch ..."))
