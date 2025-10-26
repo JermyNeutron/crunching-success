@@ -209,11 +209,11 @@ def main(os_type: str) -> tuple[float, float, float, float, float, float]:
     """
 
 
-    threshold = get_input("What's the target: ", 1000000, float)
-    cap_start = get_input("What's the starting balance: ", 25000, float)
-    util_pct_max = get_input("Maximum portfolio utilization percentage (%): ", 55, float) # convert percent to decimal
-    adj_gain = get_input("What's the trade's take-profit percentage (%): ", 10, float) # convert percent to decimal
-    contract_cost = get_input("What's the typical premium: ", 1.5, float) # convert cost/share to cost/contract
+    threshold = get_input("What's the target?", 1000000, float)
+    cap_start = get_input("What's the starting balance?", 25000, float)
+    util_pct_max = get_input("Maximum portfolio utilization percentage (%)?", 55, float) # convert percent to decimal
+    adj_gain = get_input("What's the trade's take-profit percentage (%)?", 10, float) # convert percent to decimal
+    contract_cost = get_input("What's the typical premium?", 1.5, float) # convert cost/share to cost/contract
     brok_index = int(get_input("""Select a broker:
     1) Charles Schwab (ThinkOrSwim)
     2) Robinhood
