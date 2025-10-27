@@ -41,17 +41,18 @@ def get_duration(days: int) -> str:
     Returns:
         duration_print (str)
     """
-    days = 60
-    total = days
+    
     years = days // 365
     if years:
         days -= years * 365
     calendar_seq = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     months = 0
-    for i in calendar_seq:
-        if days - i >= 0:
-            days -= i
-            months += 1
+    i = 0
+    while i < len(calendar_seq) and days >= calendar_seq[i]:
+        days -= calendar_seq[i]
+        months += 1
+        i +=1
+
     rem_days = days
     y_prefix = "years" if years > 1 else "year"
     m_prefix = "months" if months > 1 else "month"
@@ -73,14 +74,19 @@ def get_duration(days: int) -> str:
 
     return duration_print
 
+print(get_duration(41))
 
-def get_summary(meta_list: list) -> tuple[int, float, float]:
+
+def get_summary(meta_list: list) -> tuple[int, str, float, float]:
     """
     Args:
         meta_list (list)
 
     Returns:
-        something
+        total (int)
+        duration (str)
+        starting_balance (float)
+        ending_balance (float)
 
     Format:
         0 = starting balance
@@ -108,7 +114,7 @@ def get_platform_fee(brok_index: int) -> float:
 def prompt(cap_start: float, threshold: float, util_pct_max: float,
            adj_gain: float, contract_cost: float, contract_limit: int,
            compound_amt: float, compount_cycle: int, brok_index: int,
-           os_type: str,) -> None:
+           os_type: str,) -> tuple[list, tuple]:
     """
     Fixed Return - Percentage CSV calculates sequential balances from
     a given take-profit percentage, and a CSV will be produced in the
@@ -127,9 +133,15 @@ def prompt(cap_start: float, threshold: float, util_pct_max: float,
         os_type (str)
 
     Returns:
-        None
-    """
+        meta_list (list)
+        summary (tuple)
 
+    Summary Format:
+        0 = total (int)
+        1 = duration (str)
+        2 = starting_balance (float)
+        4 = ending_balance (float)
+    """
     # export CSV location
     file_path = 'export/export_scratch.csv'
 
@@ -160,6 +172,7 @@ def prompt(cap_start: float, threshold: float, util_pct_max: float,
             else:
                 contract_amt = contract_limit
 
+
         def mathing(portfolio, contract_amt) -> tuple[
             float, int, float, float, float, float, float]:
             """
@@ -187,6 +200,7 @@ def prompt(cap_start: float, threshold: float, util_pct_max: float,
             meta_list.append(transaction)
             return end_port
 
+
         compound_tally += 1
         portfolio = mathing(portfolio, contract_amt)
         if compound_tally % compount_cycle == 0:
@@ -195,13 +209,15 @@ def prompt(cap_start: float, threshold: float, util_pct_max: float,
                           "Util%", "Target", "Fees",
                           "Ending Balance"]]
     summary = get_summary(meta_list)
+
+    # Writing export sheet
     data = transaction_header + meta_list
 
     with open(file_path, "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(data)
 
-    # macOS 
+    # For macOS, opens up 'Numbers' app.
     if os_type == 'Darwin':
         subprocess.run(['open', '-a', 'Numbers', file_path])
 
@@ -230,8 +246,6 @@ def main(os_type: str) -> None:
         contract_cost (float)
         platform_fee (float)
     """
-
-
     threshold = get_input("What's the target?", 1000000, float)
     cap_start = get_input("What's the starting balance?", 25000, float)
     util_pct_max = get_input("Maximum portfolio utilization percentage (%)?", 55, float) # convert percent to decimal
@@ -246,8 +260,11 @@ def main(os_type: str) -> None:
                             
     : """, 1, str))
 
-    prompt(cap_start, threshold, util_pct_max, adj_gain,
-         contract_cost, contract_limit, compound_amt, compount_cycle, brok_index, os_type)
+    main_result = prompt(cap_start, threshold, util_pct_max, adj_gain,
+         contract_cost, contract_limit, compound_amt, compount_cycle,
+         brok_index, os_type)
+    
+    print(main_result[1])
 
 
 if __name__ == "__main__":

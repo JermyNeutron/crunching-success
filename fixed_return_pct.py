@@ -41,17 +41,18 @@ def get_duration(days: int) -> str:
     Returns:
         duration_print (str)
     """
-    days = 60
-    total = days
+    
     years = days // 365
     if years:
         days -= years * 365
     calendar_seq = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     months = 0
-    for i in calendar_seq:
-        if days - i >= 0:
-            days -= i
-            months += 1
+    i = 0
+    while i < len(calendar_seq) and days >= calendar_seq[i]:
+        days -= calendar_seq[i]
+        months += 1
+        i +=1
+
     rem_days = days
     y_prefix = "years" if years > 1 else "year"
     m_prefix = "months" if months > 1 else "month"
@@ -72,6 +73,8 @@ def get_duration(days: int) -> str:
         duration_print += f"{rem_days} {rd_prefix}"
 
     return duration_print
+
+print(get_duration(41))
 
 
 def get_summary(meta_list: list) -> tuple[int, float, float]:
@@ -178,7 +181,7 @@ def prompt(cap_start: float, threshold: float, util_pct_max: float,
         writer = csv.writer(file)
         writer.writerows(data)
 
-    # macOS 
+    # For macOS, opens up 'Numbers' app.
     if os_type == 'Darwin':
         subprocess.run(['open', '-a', 'Numbers', file_path])
 
