@@ -107,7 +107,7 @@ def get_summary(meta_list: list) -> tuple[int, str, float, float]:
 def get_platform_fee(brok_index: int) -> float:
     # 1) Charles Schwab
     # 2) Robinhood
-    fees = {0: 0, 1: 0.65, 2: 0.08}
+    fees = {0: 0, 1: 0.65, 2: 0.04}
     return fees[brok_index]
 
 
