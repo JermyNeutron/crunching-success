@@ -74,7 +74,6 @@ def get_duration(days: int) -> str:
 
     return duration_print
 
-print(get_duration(41))
 
 
 def get_summary(meta_list: list) -> tuple[int, str, float, float]:
